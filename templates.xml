@@ -145,13 +145,139 @@ while (!${shell}.isDisposed()) {
 	if (!${display}.readAndDispatch ()) 
 		${display}.sleep();
 }
-${display}.dispose();</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="mark">//M_MARK:拆分1对1</template><template autoinsert="true" context="java" deleted="false" description="my-assert-has-value" enabled="true" name="masshv">GMSOAExceptionAssert.hasValue(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param is required.");		</template><template autoinsert="true" context="java" deleted="false" description="my-assert-not-blank" enabled="true" name="massnb">GMSOAExceptionAssert.isNotBlank(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param must not blank.");		</template><template autoinsert="true" context="java" deleted="false" description="my-assert-not-empty" enabled="true" name="massne">GMSOAExceptionAssert.isNotEmpty(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param must not empty.");		</template><template autoinsert="true" context="java" deleted="false" description="my-assert-not-null" enabled="true" name="massnn">GMSOAExceptionAssert.isNotNull(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param must not null.");</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="mdo">// 1对1，无需修改，done.</template><template autoinsert="true" context="java" deleted="false" description="退出方法前的logger日志" enabled="true" name="mloge">logger.info(" End Function: ${enclosing_type}.${enclosing_method}()");</template><template autoinsert="true" context="java" deleted="false" description="进入function时的日志输出" enabled="true" name="mlogi">logger.info(" In Function: ${enclosing_type}.${enclosing_method}(${enclosing_method_arguments})", new Object[]{${enclosing_method_arguments}});</template><template autoinsert="true" context="java" deleted="false" description="执行sql前的logger日志" enabled="true" name="mlogs">logger.info(" About to excute sql={}, paramMap={}", new Object[]{sql.toString(), paramMap});</template><template autoinsert="true" context="java" deleted="false" description="显示类注解" enabled="true" name="mm">/**
+${display}.dispose();</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="mark">//M_MARK:拆分1对1</template><template autoinsert="true" context="java" deleted="false" description="my-assert-has-value" enabled="true" name="masshv">GMSOAExceptionAssert.hasValue(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param is required.");		</template><template autoinsert="true" context="java" deleted="false" description="my-assert-not-blank" enabled="true" name="massnb">GMSOAExceptionAssert.isNotBlank(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param must not blank.");		</template><template autoinsert="true" context="java" deleted="false" description="my-assert-not-empty" enabled="true" name="massne">GMSOAExceptionAssert.isNotEmpty(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param must not empty.");		</template><template autoinsert="true" context="java" deleted="false" description="my-assert-not-null" enabled="true" name="massnn">GMSOAExceptionAssert.isNotNull(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param must not null.");</template><template autoinsert="true" context="java" deleted="false" description="my-assert-just-YN" enabled="true" name="massyn">GMSOAExceptionAssert.isYN(param, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "param only Y/N.");		</template><template autoinsert="true" context="java" deleted="false" description="生成dao层基本代码-insert-batch" enabled="true" name="mdaoisb">int result = 0;
+StringBuilder sql = new StringBuilder();
+		
+int size = skuAttrValueList.size();
+BeanPropertySqlParameterSource[] beans = new BeanPropertySqlParameterSource[size];
+for (int index = 0; index &lt; size; index ++) {
+	beans[index] = new BeanPropertySqlParameterSource(skuAttrValueList.get(index));
+}
+		
+int[] results = erpBaseDao.getNamedParameterJdbcTemplate().batchUpdate(sql.toString(), beans);
+result = results.length;
+return result;</template><template autoinsert="true" context="java" deleted="false" description="生成dao层基本代码-insert-single" enabled="true" name="mdaoiss">Long result = null;
+StringBuilder sql = new StringBuilder();
+Map&lt;String, Object&gt; paramMap = new HashMap&lt;String, Object&gt;();
+
+
+paramMap.put("param", param);
+
+logger.info(" About to excute sql={}, paramMap={}", sql.toString(), paramMap);
+KeyHolder holder = new GeneratedKeyHolder();		
+orderBaseDao.getNamedParameterJdbcTemplate().update(sql.toString(), new MapSqlParameterSource(paramMap), holder);
+result = holder.getKey().longValue();
+return result;</template><template autoinsert="true" context="java" deleted="false" description="生成dao层基本代码-select pagination" enabled="true" name="mdaopg">GMSOAExceptionAssert.hasValue(pageNum, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "pageNum is required.");
+GMSOAExceptionAssert.hasValue(pageSize, GMSOAExceptionCode.PARAM_REQUIRED_EXCEPTION, "pageSize is required.");
+int start = ((pageNum - 1) * pageSize);
+int size = pageSize;
+${return_type} result = new ${return_type}();
+
+
+StringBuilder whereSql = new StringBuilder();
+StringBuilder selectSql = new StringBuilder();
+StringBuilder countSql = new StringBuilder();
+Map&lt;String, Object&gt; paramMap = new HashMap&lt;String, Object&gt;();
+
+
+countSql.append(whereSql);
+logger.info(" About to excute countSql={}, paramMap={}", new Object[] { countSql.toString(), paramMap });
+List&lt;Long&gt; countList = orderBaseDao.getNamedParameterJdbcTemplate().queryForList(countSql.toString(), paramMap, Long.class);
+int total = 0;
+if(countList != null &amp;&amp; !countList.isEmpty()) {
+	total = countList.get(0).intValue();
+}
+
+paramMap.put("start", start);
+paramMap.put("size", size);
+selectSql.append(whereSql);
+logger.info(" About to excute selectSql={}, paramMap={}", new Object[] { selectSql.toString(), paramMap });
+List&lt;Object&gt; data = orderBaseDao.getNamedParameterJdbcTemplate().query(selectSql.toString(), paramMap, new BeanPropertyRowMapper&lt;Object&gt;(Object.class));
+
+result.setItems(data);
+result.setTotal(total);
+result.setPageNum(pageNum);
+result.setPageSize(pageSize);
+result.setMaxPage((total / pageSize) + 1);
+
+return result;</template><template autoinsert="true" context="java" deleted="false" description="生成dao层基本代码-select-single" enabled="true" name="mdaosll">StringBuilder sql = new StringBuilder();
+Map&lt;String, Object&gt; paramMap = new HashMap&lt;String, Object&gt;();
+
+
+paramMap.put("param", param);
+
+logger.info(" About to excute sql={}, paramMap={}", new Object[] { sql.toString(), paramMap });
+${return_type} result = this.orderBaseDao.getNamedParameterJdbcTemplate().query(sql.toString(), paramMap, new BeanPropertyRowMapper&lt;Object&gt;(Object.class));
+return result;</template><template autoinsert="true" context="java" deleted="false" description="生成dao层基本代码-select-page" enabled="true" name="mdaoslp">${return_type} result = new ${return_type}();
+StringBuilder countSQL = new StringBuilder();
+StringBuilder selectSQL = new StringBuilder();
+StringBuilder whereSQL = new StringBuilder();
+Map&lt;String, Object&gt; paramMap = new HashMap&lt;String, Object&gt;();
+paramMap.put("param", param);
+
+//TODO[miles][${date}]: 拼接所需字段
+selectSQL.append("");
+		
+//TODO[miles][${date}]: 拼接查询条件
+whereSQL.append("");
+		
+//TODO[miles][${date}]: 拼接统计
+countSQL.append(" select count(0) ").append(whereSQL);
+logger.info(" About to excute sql={}, paramMap={}", new Object[] { countSQL.toString(), paramMap });
+List&lt;Integer&gt; dataList = this.coreBaseDao.getNamedParameterJdbcTemplate().queryForList(countSQL, paramMap, Integer.class);
+Integer total = null;
+if(CommonUtil.isListValid(dataList)) {
+	total = dataList.get(0);
+}
+result.setTotal(total);
+result.setPageNum(pageNum);
+result.setPageSize(pageSize);
+if(total != null &amp;&amp; total &gt; 0) {
+	//TODO[miles][${date}]: 拼接分页
+	whereSQL.append("");
+	selectSQL.append(whereSQL);
+	logger.info(" About to excute sql={}, paramMap={}", new Object[] { countSQL.toString(), paramMap });
+	List&lt;Object&gt; itemList = this.coreBaseDao.getNamedParameterJdbcTemplate().query(selectSQL.toString(), paramMap, new BeanPropertyRowMapper&lt;Object&gt;(Object.class));
+	if(CommonUtil.isListValid(itemList)) {
+		result.setItems(itemList);
+	} else {
+		result.setItems(null);
+	}
+	result.setMaxPage(total%pageSize);
+}
+return result;
+</template><template autoinsert="true" context="java" deleted="false" description="生成dao层基本代码-select-single" enabled="true" name="mdaosls">StringBuilder sql = new StringBuilder();
+Map&lt;String, Object&gt; paramMap = new HashMap&lt;String, Object&gt;();
+
+
+paramMap.put("param", param);
+
+logger.info(" About to excute sql={}, paramMap={}", new Object[] { sql.toString(), paramMap });
+List&lt;${return_type}&gt; dataList = this.orderBaseDao.getNamedParameterJdbcTemplate().query(sql.toString(), paramMap, new BeanPropertyRowMapper&lt;${return_type}&gt;(${return_type}.class));
+${return_type} result = null;
+if(CommonUtil.isListValid(dataList)) {
+	result = dataList.get(0);
+}
+return result;</template><template autoinsert="true" context="java" deleted="false" description="更新数据库的模板" enabled="true" name="mdaoud">boolean result = false;
+StringBuilder sql = new StringBuilder();
+Map&lt;String, Object&gt; paramMap = new HashMap&lt;String, Object&gt;();
+
+paramMap.put("param", param);
+
+logger.info(" About to excute sql={}, paramMap={}", sql.toString(), paramMap);
+int rows = orderBaseDao.getNamedParameterJdbcTemplate().update(sql.toString(), paramMap);
+if(rows &gt;= 0) {
+	result = true;
+} else {
+	result = false;
+}
+return result;</template><template autoinsert="true" context="java" deleted="false" description="" enabled="true" name="mdo">// 1对1，无需修改，done.</template><template autoinsert="true" context="java" deleted="false" description="退出方法前的logger日志" enabled="true" name="mloge">logger.info(" End Function: ${enclosing_type}.${enclosing_method}()");</template><template autoinsert="true" context="java" deleted="false" description="进入function时的日志输出" enabled="true" name="mlogi">logger.info(" In Function: ${enclosing_type}.${enclosing_method}(${enclosing_method_arguments})", new Object[]{${enclosing_method_arguments}});</template><template autoinsert="true" context="java" deleted="false" description="执行sql前的logger日志" enabled="true" name="mlogs">logger.info(" About to excute sql={}, paramMap={}", new Object[]{sql.toString(), paramMap});</template><template autoinsert="true" context="java" deleted="false" description="显示类注解" enabled="true" name="mm">/**
  *
  * @param  ${enclosing_method_arguments}
  * @return 
  * @author ${user} at ${date} ${time}
  *  
- */</template><template autoinsert="true" context="java" deleted="false" description="mongo-find" enabled="true" name="mofd">logger.info(" About to excute mongo find, query={}, collection={}", new Object[]{query, collection});</template><template autoinsert="true" context="java" deleted="false" description="my-log-mongo-insert" enabled="true" name="moin">logger.info(" About to excute mongo insert, data={}, collection={}", new Object[]{data, collection});</template><template autoinsert="true" context="java" deleted="false" description="mongo-upsert" enabled="true" name="mous">logger.info(" About to excute mongo upsert, query={}, upsert={}, collection={}", new Object[]{query, upsert, collection});</template><template autoinsert="false" context="java-statements" deleted="false" description="create new object" enabled="true" id="org.eclipse.jdt.ui.templates.new" name="new">${type} ${name} = new ${type}(${arguments});</template><template autoinsert="false" context="java" deleted="false" description="non-externalized string marker" enabled="true" id="org.eclipse.jdt.ui.templates.non-nls" name="nls">//$$NON-NLS-${N}$$</template><template autoinsert="true" context="javadoc" deleted="false" description="&lt;code&gt;null&lt;/code&gt;" enabled="true" id="org.eclipse.jdt.ui.templates.code_tag_null" name="null">&lt;code&gt;null&lt;/code&gt;</template><template autoinsert="false" context="java-members" deleted="false" description="private method" enabled="true" id="org.eclipse.jdt.ui.templates.private_method" name="private_method">private ${return_type} ${name}(${}) {
+ */</template><template autoinsert="true" context="java" deleted="false" description="mongo-find" enabled="true" name="mofd">logger.info(" About to excute mongo find, query={}, collection={}", new Object[]{query, collection});</template><template autoinsert="true" context="java" deleted="false" description="my-log-mongo-insert" enabled="true" name="moin">logger.info(" About to excute mongo insert, data={}, collection={}", new Object[]{data, collection});</template><template autoinsert="true" context="java" deleted="false" description="mongo-upsert" enabled="true" name="mous">logger.info(" About to excute mongo upsert, query={}, upsert={}, collection={}", new Object[]{query, upsert, collection});</template><template autoinsert="true" context="java" deleted="false" description="my-to-do-list" enabled="true" name="mtd">//TODO[miles][${date}]:  </template><template autoinsert="false" context="java-statements" deleted="false" description="create new object" enabled="true" id="org.eclipse.jdt.ui.templates.new" name="new">${type} ${name} = new ${type}(${arguments});</template><template autoinsert="false" context="java" deleted="false" description="non-externalized string marker" enabled="true" id="org.eclipse.jdt.ui.templates.non-nls" name="nls">//$$NON-NLS-${N}$$</template><template autoinsert="true" context="javadoc" deleted="false" description="&lt;code&gt;null&lt;/code&gt;" enabled="true" id="org.eclipse.jdt.ui.templates.code_tag_null" name="null">&lt;code&gt;null&lt;/code&gt;</template><template autoinsert="false" context="java-members" deleted="false" description="private method" enabled="true" id="org.eclipse.jdt.ui.templates.private_method" name="private_method">private ${return_type} ${name}(${}) {
 	${cursor}
 }</template><template autoinsert="false" context="java-members" deleted="false" description="private static method" enabled="true" id="org.eclipse.jdt.ui.templates.private_static_method" name="private_static_method">private static ${return_type} ${name}(${}) {
 	${cursor}
