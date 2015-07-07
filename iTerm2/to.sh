@@ -1,6 +1,6 @@
 cat<<MENU
 = = = = = = = = = = = = = = = sit = = = = = = = = = = = = = = =
-1)MVO-86.52         2)soa_core-86.121        3)soa_order-86.80
+1)MVO-86.52         2)soa_core-86.121        3)soa_order-172.31.80.254
 4)SOA-86.121        5)like-86.65             6)hudson_86.23
 
 = = = = = = = = = = = = = = = prd = = = = = = = = = = = = = = =
@@ -20,7 +20,7 @@ case "$env" in
 			;;
 			2) exec ssh deploy@192.168.86.121
 			;;
-			3) exec ssh deploy@192.168.86.80
+			3) exec ssh deploy@172.31.80.254
 			;;
 			4) exec ssh deploy@192.168.86.121
 			;;
